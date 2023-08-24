@@ -1,45 +1,59 @@
 package be.intecbrussel.model;
 
+import be.intecbrussel.repository.UserRepository;
 import be.intecbrussel.util.IdGenerator;
 
 public class User {
     private long id;
-    private String fname;
-    private String lname;
+    private String fName;
+    private String lName;
     private Account account;
 
-    private User(long id, String fname, String lname, Account account) {
+    private User(long id, String fName, String lName, Account account) {
         this.id = id;
-        this.fname = fname;
-        this.lname = lname;
+        this.fName = fName;
+        this.lName = lName;
         this.account = account;
     }
 
-    public User(String fname, String lname, Account account) {
-        this(IdGenerator.generateID(), fname, lname, account);
-    }
+    public User(String fName,String lName,Account account){
 
-    public Account getAccount() {
-        return account;
+        this(IdGenerator.generateID(),fName,lName,account);
     }
 
     public long getId() {
+        UserRepository userRepository = new UserRepository();
+        this.id = userRepository.getId(account.getEmail());
         return id;
     }
 
     public String getFname() {
-        return fname;
+
+        return fName;
     }
 
     public String getLname() {
-        return lname;
+
+        return lName;
     }
 
-    public void setFname(String fname) {
-        this.fname = fname;
+    public void setFname(String fName) {
+
+        this.fName = fName;
     }
 
-    public void setLname(String lname) {
-        this.lname = lname;
+    public void setLname(String lName) {
+
+        this.lName = lName;
+    }
+
+    public Account getAccount() {
+
+        return account;
+    }
+
+    public void setAccount(Account account) {
+
+        this.account = account;
     }
 }

@@ -2,23 +2,26 @@ package be.intecbrussel.model;
 
 public class Account {
     private final String email;
-    private String passw;
+    private String password;
 
-    public Account(String email, String passw) {
+    public Account(String email, String password) {
         this.email = email;
-        this.passw = passw;
+        this.password = password;
     }
 
     public String getEmail() {
+
         return email;
     }
 
-    public String getPassw() {
-        return passw;
+    public String getPassword() {
+
+        return password;
     }
 
-    public void setPassw(String passw) {
-        this.passw = passw;
+    public void setPassword(String password) {
+
+        this.password = password;
     }
 
 

@@ -1,19 +1,32 @@
 package be.intecbrussel.service;
 
+import be.intecbrussel.model.Account;
 import be.intecbrussel.model.User;
 import be.intecbrussel.repository.UserRepository;
+
+import java.util.Optional;
 
 public class UserService {
     private AccountService accountService = new AccountService();
     private UserRepository userRepository = new UserRepository();
-
     public boolean createUser(User user) {
-        boolean success = accountService.createAccount(user.getAccount());
 
-        if (success) {
-            return userRepository.createUser(user);
-        }
+        return accountService.createAccount(user.getAccount())&userRepository.createUser(user);
+    }
 
-        return false;
+    public Optional<Account> loginToRepository(String email) {
+        Optional<Account> account = accountService.accountAuthentication(email);
+        return account;
+    }
+
+    public Optional<User> getUserInfo(Account account) {
+        Optional<User> user = userRepository.getUserInfo(account);
+        return user;
+    }
+    public boolean deleteAccount(String email){
+        return userRepository.deleteUser(email) & accountService.deleteAccount(email);
+    }
+    public boolean changePassword(String email,String newPassword){
+        return accountService.changePassword(email,newPassword);
     }
 }

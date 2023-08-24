@@ -1,33 +1,40 @@
 package be.intecbrussel;
 
+import be.intecbrussel.config.MySQLConfiguration;
 import be.intecbrussel.model.Account;
 import be.intecbrussel.model.User;
 import be.intecbrussel.service.LoginService;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class AccountApp {
     public static void main(String[] args) {
-        System.out.println("Hello visitor");
-        System.out.println("1. Register - 2. Login");
+
+        try (Connection connection = MySQLConfiguration.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from user");
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString("fName")+" "+
+                        resultSet.getString(3)+" "+ resultSet.getString(4));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Hello User Abuser");
+        System.out.println("1.Register - 2. Login");
         Scanner scanner = new Scanner(System.in);
-        int userChoice = scanner.nextInt();
-
-
-        switch(userChoice) {
-            case 1:
-                register();
-                break;
-            case 2:
-                login();
-                break;
-            default:
-                System.out.println("WRONG INPUT");
-
+        int input = scanner.nextInt();
+        switch (input) {
+            case 1 -> register();
+            case 2 -> login();
         }
     }
-
-    private static void register() {
+    private static void register(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("What is your first name");
         String fname = scanner.nextLine();
@@ -39,27 +46,47 @@ public class AccountApp {
         String email = scanner.nextLine();
 
         System.out.println("What is your password");
-        String passw = scanner.nextLine();
+        String password = scanner.nextLine();
 
         LoginService loginService = new LoginService();
-        boolean success = loginService.register(fname, lname, email, passw);
-
-        if (success) {
-            System.out.printf("Welcome %s %s. Your account has been registered", fname, lname);
-        } else {
-            System.out.println("Something went boom.");
-        }
+        boolean success = loginService.register(fname,lname,email,password);
+        if (success){
+            System.out.println("register success");
+        }else System.out.println("INVALID email");
     }
-
-    private static void login() {
+    private static void login(){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("What is your email?");
+        System.out.println("What is your email");
         String email = scanner.nextLine();
-        System.out.println("What is your password?");
+
+        System.out.println("What is your password");
         String password = scanner.nextLine();
         LoginService loginService = new LoginService();
 
-        boolean success = loginService.login(email, password);
-        System.out.println("Login Okay.");
+        Optional<User> user = loginService.login(email,password);
+        if (user.isPresent()){
+            User user1 = user.get();
+            System.out.println("Hello "+user1.getFname()+" "+user1.getLname());
+            System.out.println("0-settings");
+            int input = scanner.nextInt();
+            switch (input){
+                case 0: settings(user1);
+                    break;
+            }
+        }
+        else System.out.println("INVALID INPUT");
+    }
+    private static void settings(User user){
+        LoginService loginService = new LoginService();
+        System.out.println("settings");
+        System.out.println("1-change password 2-delete account");
+        Scanner scanner = new Scanner(System.in);
+        int input = scanner.nextInt();
+        switch (input){
+            case 1:
+                break;
+            case 2:
+                break;
+        }
     }
 }

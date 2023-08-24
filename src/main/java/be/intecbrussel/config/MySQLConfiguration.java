@@ -7,28 +7,22 @@ import java.util.Properties;
 
 public class MySQLConfiguration {
     public static Connection getConnection(){
-        String user = "root";
-        String passw = "toor";
+        String user = "Jan";
+        String password = "password";
         String url = "localhost";
         String port = "3306";
-        String database = "accountapp";
-
-        String connectionString = String.format("jdbc:mysql://%s:%s/%s", url,port,database);
-
+        String database = "userdb";
+        String connectionString = String.format("jdbc:mysql://%s:%s/%s",url,port,database);
         Properties connectionProperties = new Properties();
-        connectionProperties.put("user",user);
-        connectionProperties.put("passw", passw);
-
+        connectionProperties.put("User",user);
+        connectionProperties.put("Password",password);
         Connection connection;
         try {
             connection = DriverManager.getConnection(connectionString,connectionProperties);
-        } catch (SQLException e){
-            System.err.println("ERROR: Could not connect to DB");
+        } catch (SQLException e) {
+            System.out.println("ERROR: Sorry");
             throw new RuntimeException(e);
         }
         return connection;
-    }
-    public static void main(String[]args){
-        getConnection();
     }
 }
