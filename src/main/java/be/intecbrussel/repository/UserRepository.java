@@ -26,7 +26,8 @@ public class UserRepository {
             connection.close();
             return true;
         }catch (Exception  e){
-            System.out.println(e);
+            System.err.println("USER COULD NOT BE CREATED");
+            e.printStackTrace();
             return false;
         }
     }
