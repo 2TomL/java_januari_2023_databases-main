@@ -56,4 +56,13 @@ public class User {
 
         this.account = account;
     }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", fname='" + fName + '\'' +
+                ", lname='" + lName + '\'' +
+                ", account=" + account +
+                '}';
+    }
 }

@@ -2,9 +2,11 @@ package be.intecbrussel.repository;
 
 import be.intecbrussel.config.MySQLConfiguration;
 import be.intecbrussel.model.Account;
+import com.google.protobuf.Internal;
 import com.mysql.cj.exceptions.ConnectionIsClosedException;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 
 public class AccountRepository {
@@ -40,6 +42,7 @@ public class AccountRepository {
         return Optional.empty();
     }
 
+
     public boolean deleteAccount(String email) {
         String query = String.format("Delete from Account where email like ?");
 
@@ -66,6 +69,23 @@ public class AccountRepository {
         }catch (Exception  e){
             System.out.println(e + "User Repository");
             return false;
+        }
+    }
+    public void createManyAccounts (List<Account> accountList){
+        String query = String.format("INSERT INTO account VALUES (?,?)");
+
+        try (Connection connection = MySQLConfiguration.getConnection()){
+            PreparedStatement statement = connection.prepareStatement(query);
+            for (Account account : accountList){
+                statement.setString(1,account.getEmail());
+                statement.setString(2, account.getPassword());
+                statement.addBatch();
+            }
+            statement.clearBatch();
+            statement.executeBatch();
+        }catch (SQLException e){
+            System.err.println("FAIL");
+            e.printStackTrace();
         }
     }
 }

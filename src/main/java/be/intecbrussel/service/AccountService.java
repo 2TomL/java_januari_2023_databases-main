@@ -3,6 +3,7 @@ package be.intecbrussel.service;
 import be.intecbrussel.model.Account;
 import be.intecbrussel.repository.AccountRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class AccountService {
@@ -14,6 +15,9 @@ public class AccountService {
     public Optional<Account> accountAuthentication(String email) {
         Optional<Account> account = accountRepository.accountAuthentication(email);
         return account;
+    }
+    public void createManyAccounts(List<Account> accountList) {
+        accountRepository.createManyAccounts(accountList);
     }
 
     public boolean deleteAccount(String email) {

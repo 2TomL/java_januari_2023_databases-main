@@ -9,8 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 public class AccountApp {
     public static void main(String[] args) {
@@ -26,13 +25,36 @@ public class AccountApp {
             throw new RuntimeException(e);
         }
         System.out.println("Hello User Abuser");
-        System.out.println("1.Register - 2. Login");
+        System.out.println("1.Register - 2. Login - 3. Add multiple users");
         Scanner scanner = new Scanner(System.in);
         int input = scanner.nextInt();
         switch (input) {
             case 1 -> register();
             case 2 -> login();
+            case 3 -> batchInsert();
         }
+    }
+    private static void batchInsert(){
+        List<User> userList = new ArrayList<>();
+        for (int i = 5; i > 0; i-- ) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter first name");
+            String fname = scanner.nextLine();
+
+            System.out.println("Enter last name");
+            String lname = scanner.nextLine();
+
+            System.out.println("Enter email");
+            String email = scanner.nextLine();
+
+            System.out.println("Enter password");
+            String passw = scanner.nextLine();
+
+            User user = new User(fname,lname,new Account(email, passw));
+            userList.add(user);
+        }
+        LoginService loginService = new LoginService();
+        loginService.registerManyUsers(userList);
     }
     private static void register(){
         Scanner scanner = new Scanner(System.in);

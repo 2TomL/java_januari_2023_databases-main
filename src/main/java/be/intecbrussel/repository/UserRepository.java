@@ -4,11 +4,10 @@ import be.intecbrussel.config.MySQLConfiguration;
 import be.intecbrussel.model.Account;
 import be.intecbrussel.model.User;
 import be.intecbrussel.util.IdGenerator;
+import com.sun.source.tree.TryTree;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 
 public class UserRepository {
@@ -40,12 +39,13 @@ public class UserRepository {
             statement.setString(1,account.getEmail());
 
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()){   //if statement kan ook
                 User user = new User(resultSet.getString("fName"),resultSet.getString("lName"),account);
                 return Optional.of(user);
             }
-        }catch (Exception  e){
-            System.out.println(e + " (User Repo)");
+        }catch (Exception e){
+            System.err.println("NO USER FOUND");
+            e.printStackTrace();
         }
         return Optional.empty();
     }
@@ -77,6 +77,21 @@ public class UserRepository {
             System.out.println(e + "User Repo");
             return false;
         }
-
+    }
+    public void createManyUsers(List<User>users){
+        String query = String.format("INSERT Users VALUES (?,?,?,?)");
+        try (Connection connection = MySQLConfiguration.getConnection()){
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            for (User user : users){
+                preparedStatement.setLong(1,user.getId());
+                preparedStatement.setString(2,user.getFname());
+                preparedStatement.setString(3,user.getLname());
+                preparedStatement.setString(4,user.getAccount().getEmail());
+                preparedStatement.addBatch();
+            }
+            preparedStatement.executeBatch();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 }

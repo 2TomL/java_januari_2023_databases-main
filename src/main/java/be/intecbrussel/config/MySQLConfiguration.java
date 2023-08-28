@@ -20,7 +20,7 @@ public class MySQLConfiguration {
         try {
             connection = DriverManager.getConnection(connectionString,connectionProperties);
         } catch (SQLException e) {
-            System.out.println("ERROR: Sorry");
+            System.out.println("ERROR: Sorry no connection");
             throw new RuntimeException(e);
         }
         return connection;
