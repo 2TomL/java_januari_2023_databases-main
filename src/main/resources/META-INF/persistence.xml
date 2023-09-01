@@ -10,7 +10,7 @@
             <property name="jakarta.persistence.jdbc.url"    value="jdbc:mysql://localhost:3306/userdb" />
             <property name="jakarta.persistence.jdbc.user"   value="Jan" />
             <property name="jakarta.persistence.jdbc.password" value="password" />
-            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create" />
+            <property name="jakarta.persistence.schema-generation.database.action" value="update" />
             <property name="hibernate.dialect"    value="org.hibernate.dialect.MySQLDialect" />
             <property name="hibernate.show_sql"   value="true" />
             <property name="hibernate.format_sql" value="true" />

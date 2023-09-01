@@ -25,7 +25,7 @@ public class AccountRepository implements IAccountRepository{
         Account account = em.find(Account.class,email);
         em.getTransaction().commit();
         em.close();
-        return Optional.ofNullable(account);
+        return Optional.of(account);
     }
 
     public boolean deleteAccount(String email) {

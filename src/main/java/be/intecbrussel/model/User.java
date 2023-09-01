@@ -10,14 +10,19 @@ import java.util.Objects;
 
 @Entity
 public class User {
-    @Id
+
     // nu via Id generator class ... maar ook mogelijk via
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String fName;
     private String lName;
+    @Id
     @OneToOne
     private Account account;
+
+    public User (){
+
+    }
 
     private User(long id, String fName, String lName, Account account) {
         this.id = id;
@@ -27,7 +32,6 @@ public class User {
     }
 
     public User(String fName,String lName,Account account){
-
         this(IdGenerator.generateID(),fName,lName,account);
     }
 
