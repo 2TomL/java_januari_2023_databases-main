@@ -9,6 +9,7 @@ import java.util.Optional;
 public class AccountService {
     private AccountRepository accountRepository = new AccountRepository();
     public boolean createAccount(Account account) {
+
         return accountRepository.createAccount(account);
     }
 
@@ -17,6 +18,7 @@ public class AccountService {
         return account;
     }
     public void createManyAccounts(List<Account> accountList) {
+
         accountRepository.createManyAccounts(accountList);
     }
 

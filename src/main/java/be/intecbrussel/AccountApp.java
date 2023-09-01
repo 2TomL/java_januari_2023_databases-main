@@ -1,9 +1,12 @@
 package be.intecbrussel;
 
-import be.intecbrussel.config.MySQLConfiguration;
+import be.intecbrussel.config.EMFConfiguration;
 import be.intecbrussel.model.Account;
 import be.intecbrussel.model.User;
 import be.intecbrussel.service.LoginService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,14 +17,14 @@ import java.util.*;
 public class AccountApp {
     public static void main(String[] args) {
 
-        try (Connection connection = MySQLConfiguration.getConnection()){
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("select * from user");
-            while (resultSet.next()) {
-                System.out.println(resultSet.getString("fName")+" "+
-                        resultSet.getString(3)+" "+ resultSet.getString(4));
+        try (EntityManager em = EMFConfiguration.getConnection().createEntityManager()) {
+            Query nativeQuery = em.createNativeQuery("SELECT * FROM user");
+            List<Object[]> resultList = nativeQuery.getResultList();
+
+            for (Object[] row : resultList) {
+                System.out.println(Arrays.toString(row));
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         System.out.println("Hello User Abuser");
@@ -36,7 +39,7 @@ public class AccountApp {
     }
     private static void batchInsert(){
         List<User> userList = new ArrayList<>();
-        for (int i = 5; i > 0; i-- ) {
+        for (int i = 3; i > 0; i-- ) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Enter first name");
             String fname = scanner.nextLine();

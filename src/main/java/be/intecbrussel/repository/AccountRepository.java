@@ -1,91 +1,71 @@
 package be.intecbrussel.repository;
 
-import be.intecbrussel.config.MySQLConfiguration;
+import be.intecbrussel.config.EMFConfiguration;
 import be.intecbrussel.model.Account;
-import com.google.protobuf.Internal;
-import com.mysql.cj.exceptions.ConnectionIsClosedException;
+import jakarta.persistence.EntityManager;
 
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
-public class AccountRepository {
+public class AccountRepository implements IAccountRepository{
+    private EntityManager em;
     public boolean createAccount(Account account){
-        // send account to database
-        String query = String.format("INSERT INTO Account VALUES (?,?)");
-        try ( Connection connection = MySQLConfiguration.getConnection()){
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,account.getEmail());
-            statement.setString(2,account.getPassword());
-            statement.executeUpdate();
-            return true;
-        }catch (Exception  e){
-            System.out.println(e);
-            return false;
-        }
-
+        em = EMFConfiguration.getConnection().createEntityManager();
+        em.getTransaction().begin();
+        em.persist(account);
+        em.getTransaction().commit();
+        em.close();
+        return  true;
     }
+
     public Optional<Account> accountAuthentication(String email) {
-        String query = String.format(" select * from Account where email like ?");
-
-        try (Connection connection = MySQLConfiguration.getConnection()){
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,email);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
-                Account account = new Account(resultSet.getString("email"),resultSet.getString("password"));
-                return Optional.of(account);
-            }
-        }catch (Exception  e){
-            System.out.println(e + " (Account Repository)");
-        }
-        return Optional.empty();
+        em = EMFConfiguration.getConnection().createEntityManager();
+        em.getTransaction().begin();
+        Account account = em.find(Account.class,email);
+        em.getTransaction().commit();
+        em.close();
+        return Optional.ofNullable(account);
     }
-
 
     public boolean deleteAccount(String email) {
-        String query = String.format("Delete from Account where email like ?");
-
-        try (Connection connection = MySQLConfiguration.getConnection()){
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,email);
-            statement.executeUpdate();
+        em = EMFConfiguration.getConnection().createEntityManager();
+        em.getTransaction().begin();
+        Account account = em.find(Account.class,email);
+        if (account != null){
+            em.remove(account);
+            em.getTransaction().commit();
+            em.close();
             return true;
-        }catch (Exception  e){
-            System.out.println(e + "User Repository");
+        }else {
+            em.getTransaction().rollback();
+            em.close();
             return false;
         }
     }
 
     public boolean changePassword(String email, String newPassword) {
-        String query = String.format(" UPDATE Account SET password =? WHERE email LIKE ?");
-
-        try (Connection connection = MySQLConfiguration.getConnection()){
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,newPassword);
-            statement.setString(2,email);
-            statement.executeUpdate();
-            return true;
-        }catch (Exception  e){
-            System.out.println(e + "User Repository");
-            return false;
+        em = EMFConfiguration.getConnection().createEntityManager();
+        em.getTransaction().begin();
+        Account account = em.find(Account.class, email);
+        if (account != null) {
+            account.setPassword(newPassword);
+            em.getTransaction().commit();
+            em.close();
+            return true; // Password changed ok
+        } else {
+            em.getTransaction().rollback();
+            em.close();
+            return false; // Account not ok
         }
     }
     public void createManyAccounts (List<Account> accountList){
-        String query = String.format("INSERT INTO account VALUES (?,?)");
-
-        try (Connection connection = MySQLConfiguration.getConnection()){
-            PreparedStatement statement = connection.prepareStatement(query);
-            for (Account account : accountList){
-                statement.setString(1,account.getEmail());
-                statement.setString(2, account.getPassword());
-                statement.addBatch();
-            }
-            statement.clearBatch();
-            statement.executeBatch();
-        }catch (SQLException e){
-            System.err.println("FAIL");
-            e.printStackTrace();
+        em = EMFConfiguration.getConnection().createEntityManager();
+        em.getTransaction().begin();
+        for (Account account : accountList) {
+            em.persist(account);
         }
+        em.getTransaction().commit();
+        em.close();
     }
 }
