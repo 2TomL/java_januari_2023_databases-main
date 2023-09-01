@@ -54,6 +54,7 @@ public class AccountApp {
             String passw = scanner.nextLine();
 
             User user = new User(fname,lname,new Account(email, passw));
+
             userList.add(user);
         }
         LoginService loginService = new LoginService();
